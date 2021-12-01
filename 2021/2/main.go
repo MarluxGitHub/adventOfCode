@@ -9,6 +9,7 @@ import (
 
 func main() {
 	inPutArray := readIntArrayFromFile("input.txt")
+	inPutArray = genSlidingWindowOfSize3(inPutArray)
 	sum := 0
 	last := inPutArray[0]
 
@@ -36,6 +37,14 @@ func readIntArrayFromFile(filename string) []int {
 		// convert string to int
 		i, _ := strconv.Atoi(scanner.Text())
 		result = append(result, i)
+	}
+	return result
+}
+
+func genSlidingWindowOfSize3(inPutArray []int) []int {
+	var result []int
+	for i := 0; i < len(inPutArray)-2; i++ {
+		result = append(result, inPutArray[i]+inPutArray[i+1]+inPutArray[i+2])
 	}
 	return result
 }
