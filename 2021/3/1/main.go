@@ -10,17 +10,16 @@ import (
 var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
 func println(f string) { fmt.Fprintln(writer, f) }
 
-var inputs []string
-
 func main() {
   // STDOUT MUST BE FLUSHED MANUALLY!!!
   defer writer.Flush()
-  readFile("../input.txt")
-  response := transform()
+  inputs := readFile("../input.txt")
+  response := transform(inputs)
   println(strconv.Itoa(int(response)))
 }
 
-func readFile(filename string) {
+func readFile(filename string) []string {
+	var inputs []string
 	file, err := os.Open(filename)
 	if err != nil {
 		panic(err)
@@ -31,20 +30,13 @@ func readFile(filename string) {
 	for scanner.Scan() {
 		inputs = append(inputs, scanner.Text())
 	}
+
+	return inputs
 }
 
-func transform() int64 {
-	var binaryNumbers []string
-	binaryNumbers = make([]string, len(inputs[0]))
-
-	for i := 0; i < len(inputs); i++ {
-		chars := []rune(inputs[i])
-		for j:=0; j < len(chars); j++ {
-			binaryNumbers[j] += string(chars[j])
-		}
-	}
-
+func transform(inputs []string) int64 {
 	result := make([]string, 2)
+	binaryNumbers := getBinaryNumbers(inputs)
 
 	for i := 0; i < len(binaryNumbers); i++ {
 		c0, c1 := 0,0
@@ -65,8 +57,25 @@ func transform() int64 {
 		}
 	}
 
-	i1, _ := strconv.ParseInt(result[0], 2, 64)
-	i2, _ := strconv.ParseInt(result[1], 2, 64)
+	return binaryToInt(result[0]) * binaryToInt(result[1])
+}
 
-	return i1 * i2
+func getBinaryNumbers(inputs []string) []string {
+	var binaryNumbers []string
+	binaryNumbers = make([]string, len(inputs[0]))
+
+	for i := 0; i < len(inputs); i++ {
+		chars := []rune(inputs[i])
+		for j:=0; j < len(chars); j++ {
+			binaryNumbers[j] += string(chars[j])
+		}
+	}
+
+	return binaryNumbers
+}
+
+
+func binaryToInt(binary string) int64 {
+	i, _ := strconv.ParseInt(binary, 2, 64)
+	return i
 }
