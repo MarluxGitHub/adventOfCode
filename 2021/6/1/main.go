@@ -25,7 +25,7 @@ func main() {
 
   initFish()
 
-  for i := 0; i < 256; i++ {
+  for i := 0; i < 80; i++ {
 	simulateDay()
   }
 

@@ -16,121 +16,58 @@ func println(f string) { fmt.Fprintln(writer, f) }
 func printf(f string) { fmt.Fprintf(writer, f) }
 
 var lines []string
-var oceanMap [][]int
-
-func standardizeSpaces(s string) string {
-    return strings.Join(strings.Fields(s), " ")
-}
+var fish [9]int
 
 func main() {
   // STDOUT MUST BE FLUSHED MANUALLY!!!
   defer writer.Flush()
   readInput()
-  initOceanMap()
-  computeOceanMap()
-  //printOceanMap()
-  result := countCriticalPoints()
-  println(strconv.Itoa(result))
+
+  initFish()
+
+  for i := 0; i < 256; i++ {
+	simulateDay()
+  }
+
+  println(strconv.Itoa(countFish()))
 }
 
-func printOceanMap() {
-	println("")
-	for _, row := range oceanMap {
-		println("")
-		for _, col := range row {
-			printf(strconv.Itoa(col))
-		}
-	}
-	println("")
-}
-
-func initOceanMap() {
-	oceanMap = make([][]int, 1000)
-
-	for i := range oceanMap {
-		oceanMap[i] = make([]int, 1000)
-	}
-}
-
-func countCriticalPoints() int {
+func countFish() int {
 	count := 0
-	for _, row := range oceanMap {
-		for _, col := range row {
-			if col > 1 {
-				count++
-			}
-		}
+	for i := 0; i < 9; i++ {
+		count += fish[i]
 	}
 	return count
 }
 
-func computeOceanMap() {
-	for _, line := range lines {
-		params := strings.Split(line, "->")
-		cordsStr := strings.Split(params[0], ",")
-		cordGoal := strings.Split(params[1], ",")
-		x1, y1 := cordsToInt(cordsStr)
-		x2, y2 := cordsToInt(cordGoal)
+func printFish() {
+	for i := 0; i < 9; i++ {
+		printf(strconv.Itoa(fish[i]))
+	}
+	println("")
+}
 
-		if(x1 == x2) {
-			drawVerticalLine(x1, y1, y2)
-			continue
-		}
+func initFish() {
+	input := strings.Split(lines[0], ",")
 
-		if(y1 == y2) {
-			drawHorizontalLine(x1, x2, y1)
-			continue
-		}
-
-		drawDiagonalLine(x1, y1, x2, y2)
+	// for input
+	for i := 0; i < len(input); i++ {
+		key, _ := strconv.Atoi(input[i])
+		fish[key]++
 	}
 }
 
-func drawHorizontalLine(x1, x2, y int) {
-	if(x1 > x2) {
-		x1, x2 = x2, x1
-	}
-	for x := x1; x <= x2; x++ {
-		oceanMap[y][x]++
-	}
-}
+func simulateDay() {
+	fish2 := [9]int{}
+	help := fish[0]
 
-func drawVerticalLine(x, y1, y2 int) {
-	if(y1 > y2) {
-		y1, y2 = y2, y1
+	for i := 1; i < 9; i++ {
+		fish2[i-1] = fish[i]
 	}
-	for y := y1; y <= y2; y++ {
-		oceanMap[y][x]++
-	}
-}
 
-func drawDiagonalLine(x1, y1, x2, y2 int) {
-	dx := abs(x2 - x1)
-	dy := abs(y2 - y1)
-
-	if(dx > dy) {
-		if(x1 > x2) {
-			x1, y1, x2, y2 = x2, y2, x1, y1
-		}
-		for x := x1; x <= x2; x++ {
-			y := y1 + (y2 - y1) * (x - x1) / dx
-			oceanMap[y][x]++
-		}
-	} else {
-		if(y1 > y2) {
-			x1, y1, x2, y2 = x2, y2, x1, y1
-		}
-		for y := y1; y <= y2; y++ {
-			x := x1 + (x2 - x1) * (y - y1) / dy
-			oceanMap[y][x]++
-		}
-	}
-}
-
-func cordsToInt(cords []string) (int, int) {
-	x, _ := strconv.Atoi(strings.TrimSpace(cords[0]))
-	y, _ := strconv.Atoi(strings.TrimSpace(cords[1]))
-	return x, y
+	fish = fish2
+	fish[8] = help
+	fish[6] += help
 }
 
 func readInput() {
@@ -139,15 +76,8 @@ func readInput() {
 	log.Fatal(err)
 	}
 
-	lines, err = i.Strings(2021, 5)
+	lines, err = i.Strings(2021, 6)
 	if err != nil {
 	log.Fatal(err)
 	}
-}
-
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
 }
