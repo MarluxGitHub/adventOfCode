@@ -1,0 +1,117 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+	"strconv"
+
+	"github.com/echojc/aocutil"
+)
+
+var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
+func println(f string) { fmt.Fprintln(writer, f) }
+func printf(f string) { fmt.Fprintf(writer, f) }
+
+var lines []string
+var result = 0
+var steps = 100
+
+var octopuses [][]int
+var flashMap [][]int
+
+func main() {
+  // STDOUT MUST BE FLUSHED MANUALLY!!!
+  defer writer.Flush()
+  readInput()
+
+  stringLinesTo2dIntArray()
+
+
+  for i := 0; i < steps; i++ {
+	  step()
+  }
+
+  println("Result: " + strconv.Itoa(result))
+}
+
+func readInput() {
+	i, err := aocutil.NewInputFromFile("session_id")
+	if err != nil {
+	log.Fatal(err)
+	}
+
+	lines, err = i.Strings(2021, 11)
+	if err != nil {
+	log.Fatal(err)
+	}
+}
+
+func stringLinesTo2dIntArray () {
+	octopuses = make([][]int, len(lines))
+	flashMap = make([][]int, len(lines))
+	for i, line := range lines {
+		octopuses[i] = make([]int, len(line))
+		flashMap[i] = make([]int, len(line))
+		for j, char := range line {
+			octopuses[i][j] = int(char) - 48
+			flashMap[i][j] = 0
+		}
+	}
+}
+
+func print2dIntArray (array [][]int) {
+	for _, row := range array {
+		for _, col := range row {
+			printf(fmt.Sprintf("%d", col))
+		}
+		println("")
+	}
+}
+
+func step() {
+	flashOctopuses()
+	clearFlashMap()
+}
+
+func flashOctopuses () {
+	for i, row := range octopuses {
+		for j, _ := range row {
+			flashOctopus(i, j)
+		}
+	}
+}
+
+func flashOctopus(x int, y int) {
+	if(x < 0 || x >= len(octopuses)) {
+		return
+	}
+	if(y < 0 || y >= len(octopuses[x])) {
+		return
+	}
+
+	octopuses[x][y] += 1
+
+	if(octopuses[x][y] > 9 && flashMap[x][y] == 0) {
+		result++
+		flashMap[x][y] = 1
+
+		for xi := x - 1; xi <= x + 1; xi++ {
+			for yi := y - 1; yi <= y + 1; yi++ {
+				flashOctopus(xi, yi)
+			}
+		}
+	}
+}
+
+func clearFlashMap () {
+	for i, _ := range flashMap {
+		for j, _ := range flashMap[i] {
+			flashMap[i][j] = 0
+			if(octopuses[i][j] > 9) {
+				octopuses[i][j] = 0
+			}
+		}
+	}
+}
