@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/RyanCarrier/dijkstra"
 	"github.com/echojc/aocutil"
 )
 
@@ -18,21 +19,14 @@ var lines []string
 var result int = 0
 
 var problem [][] int
-var dp [][] int
+
 
 func main() {
 	// STDOUT MUST BE FLUSHED MANUALLY!!!
 	defer writer.Flush()
 	readInput()
 	stringLinesTo2dIntArray()
-
-	result = solve()
-
-	print2dArray(problem)
-
-	println("")
-
-	print2dArray(dp)
+	result := solve()
 
 	println(strconv.Itoa(result))
 }
@@ -51,7 +45,6 @@ func readInput() {
 
 func stringLinesTo2dIntArray () {
 	problem = make([][]int, 5*len(lines))
-	dp = make([][]int, 5*len(lines))
 
 	xLen := len(lines)
 	yLen := len(lines[0])
@@ -60,7 +53,6 @@ func stringLinesTo2dIntArray () {
 
 		for x:=0; x < 5; x++ {
 			problem[i + (xLen*x)] = make([]int, 5*len(line))
-			dp[i + (xLen*x)] = make([]int, 5*len(line))
 		}
 
 		for j, char := range line {
@@ -73,7 +65,6 @@ func stringLinesTo2dIntArray () {
 						n = n - 9
 					}
 
-					dp[i+(xLen * x)][j+(yLen * y)] = 0
 					problem[i+(xLen * x)][j+(yLen * y)] = n
 				}
 			}
@@ -82,44 +73,48 @@ func stringLinesTo2dIntArray () {
 }
 
 func solve() int {
-	for i := 0; i < len(problem); i++ {
-		for j := 0; j < len(problem[i]); j++ {
-			if j == 0 && i == 0 {
-				dp[i][j] = 0
-				continue
-			}
+	graph := dijkstra.NewGraph()
 
-			if(j == 0) {
-				dp[i][j] = problem[i][j] + dp[i-1][j]
-				continue
-			}
-
-			if(i == 0) {
-				dp[i][j] = problem[i][j] + dp[i][j-1]
-				continue
-			}
-
-			dp[i][j] = problem[i][j] + min(dp[i-1][j], dp[i][j-1])
+	for i, row := range problem {
+		for j, _ := range row {
+			graph.AddVertex(i * len(row) + j)
 		}
 	}
 
-	return dp[len(problem) - 1][len(problem[0]) - 1]
-}
-
-func print2dArray(array [][]int) {
-	for _, line := range array {
-		for _, char := range line {
-			printf(fmt.Sprintf("%d", char))
-			printf(" ")
+	for i, row := range problem {
+		for j, value := range row {
+			index := i * len(row) + j
+			if checkLegitPoint(i-1, j) {
+				graph.AddArc((i-1) * len(row) + j, index,  int64(value))
+			}
+			if checkLegitPoint(i+1, j) {
+				graph.AddArc((i+1) * len(row) + j, index,  int64(value))
+			}
+			if checkLegitPoint(i, j-1) {
+				graph.AddArc((i) * len(row) + j-1, index,  int64(value))
+			}
+			if checkLegitPoint(i, j+1) {
+				graph.AddArc((i) * len(row) + j+1, index,  int64(value))
+			}
 		}
-		println("")
 	}
+
+	best, err := graph.Shortest(0, len(problem) * len(problem[0]) - 1)
+	if err!=nil{
+		log.Fatal(err)
+	}
+
+	return int(best.Distance)
 }
 
-func min(a int, b int) int {
-	if a <= b {
-		return a
+func checkLegitPoint(x, y int) bool {
+	if x < 0 || x >= len(problem) {
+		return false
 	}
 
-	return b
+	if y < 0 || y >= len(problem[x]) {
+		return false
+	}
+
+	return true
 }

@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/RyanCarrier/dijkstra"
 	"github.com/echojc/aocutil"
 )
 
@@ -18,7 +19,7 @@ var lines []string
 var result int = 0
 
 var problem [][] int
-var dp [][] int
+
 
 func main() {
 	// STDOUT MUST BE FLUSHED MANUALLY!!!
@@ -44,41 +45,59 @@ func readInput() {
 
 func stringLinesTo2dIntArray () {
 	problem = make([][]int, len(lines))
-	dp = make([][]int, len(lines))
 
 	for i, line := range lines {
 		problem[i] = make([]int, len(line))
-		dp[i] = make([]int, len(line))
 
 		for j, char := range line {
 			problem[i][j] = int(char) - 48
-			dp[i][j] = 0
 		}
 	}
 }
 
 func solve() int {
-	for i := 0; i < len(lines); i++ {
-		for j := 0; j < len(lines[i]); j++ {
-			if i == 0 && j == 0 {
-				continue
-			} else if i == 0 {
-				dp[i][j] = dp[i][j-1] + problem[i][j]
-			} else if j == 0 {
-				dp[i][j] = dp[i-1][j] + problem[i][j]
-			} else {
-				dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + problem[i][j]
+	graph := dijkstra.NewGraph()
+
+	for i, row := range problem {
+		for j, _ := range row {
+			graph.AddVertex(i * len(row) + j)
+		}
+	}
+
+	for i, row := range problem {
+		for j, value := range row {
+			index := i * len(row) + j
+			if checkLegitPoint(i-1, j) {
+				graph.AddArc((i-1) * len(row) + j, index,  int64(value))
+			}
+			if checkLegitPoint(i+1, j) {
+				graph.AddArc((i+1) * len(row) + j, index,  int64(value))
+			}
+			if checkLegitPoint(i, j-1) {
+				graph.AddArc((i) * len(row) + j-1, index,  int64(value))
+			}
+			if checkLegitPoint(i, j+1) {
+				graph.AddArc((i) * len(row) + j+1, index,  int64(value))
 			}
 		}
 	}
 
-	return dp[len(lines)-1][len(lines[0])-1]
-}
-
-func min(a int, b int) int {
-	if a < b {
-		return a
+	best, err := graph.Shortest(0, len(problem) * len(problem[0]) - 1)
+	if err!=nil{
+		log.Fatal(err)
 	}
 
-	return b
+	return int(best.Distance)
+}
+
+func checkLegitPoint(x, y int) bool {
+	if x < 0 || x >= len(problem) {
+		return false
+	}
+
+	if y < 0 || y >= len(problem[x]) {
+		return false
+	}
+
+	return true
 }
