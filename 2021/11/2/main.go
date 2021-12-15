@@ -12,7 +12,6 @@ import (
 
 var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
 func println(f string) { fmt.Fprintln(writer, f) }
-func printf(f string) { fmt.Fprintf(writer, f) }
 
 var lines []string
 var result = 0
@@ -30,7 +29,7 @@ func main() {
 
   stringLinesTo2dIntArray()
 
-  for true {
+  for {
 		steps++
 		if(step() == octopusCount) {
 			break
@@ -68,15 +67,6 @@ func stringLinesTo2dIntArray () {
 	}
 }
 
-func print2dIntArray (array [][]int) {
-	for _, row := range array {
-		for _, col := range row {
-			printf(fmt.Sprintf("%d", col))
-		}
-		println("")
-	}
-}
-
 func step() int {
 	flashOctopuses()
 
@@ -88,7 +78,7 @@ func step() int {
 
 func flashOctopuses () {
 	for i, row := range octopuses {
-		for j, _ := range row {
+		for j := range row {
 			flashOctopus(i, j)
 		}
 	}
@@ -118,7 +108,7 @@ func flashOctopus(x int, y int) {
 func countFlashMapValuesBiggerZero()int {
 	count := 0
 	for i, row := range flashMap {
-		for j, _ := range row {
+		for j := range row {
 			if(flashMap[i][j] > 0) {
 				count++
 			}
@@ -128,8 +118,8 @@ func countFlashMapValuesBiggerZero()int {
 }
 
 func clearFlashMap () {
-	for i, _ := range flashMap {
-		for j, _ := range flashMap[i] {
+	for i := range flashMap {
+		for j := range flashMap[i] {
 			flashMap[i][j] = 0
 			if(octopuses[i][j] > 9) {
 				octopuses[i][j] = 0

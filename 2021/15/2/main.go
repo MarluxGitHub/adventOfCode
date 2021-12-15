@@ -13,7 +13,6 @@ import (
 
 var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
 func println(f string) { fmt.Fprintln(writer, f) }
-func printf(f string) { fmt.Fprintf(writer, f) }
 
 var lines []string
 var result int = 0
@@ -26,7 +25,7 @@ func main() {
 	defer writer.Flush()
 	readInput()
 	stringLinesTo2dIntArray()
-	result := solve()
+	result = solve()
 
 	println(strconv.Itoa(result))
 }
@@ -76,7 +75,7 @@ func solve() int {
 	graph := dijkstra.NewGraph()
 
 	for i, row := range problem {
-		for j, _ := range row {
+		for j := range row {
 			graph.AddVertex(i * len(row) + j)
 		}
 	}
