@@ -18,7 +18,6 @@ func println(f string) { fmt.Fprintln(writer, f) }
 var lines []string
 var result int = 0
 
-
 func main() {
 	// STDOUT MUST BE FLUSHED MANUALLY!!!
 	defer writer.Flush()
