@@ -1,0 +1,1 @@
+Today Python cause eval() takes all the parsing work away from me
