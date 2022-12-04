@@ -1,4 +1,4 @@
-module marlux/aoc
+module MarluxGitHub/adventOfCode
 
 go 1.19
 
