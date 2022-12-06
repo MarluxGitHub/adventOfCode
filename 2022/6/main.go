@@ -34,20 +34,26 @@ func main() {
 }
 
 func solve1() {
-	result = 0
-	// is only 1 line but hey :)
-    out:
-	for _, line := range lines {
-		for i := 4; i < len(line); i++ {
-			// Get a substring from i-4 to i
-			unique := hasOnlyUniqueChars(line[i-4 : i])
-			if unique {
-				println(line[i-4 : i])
-				result = i
-				break out
-			}
+	result = solve(4)
+}
+
+func solve2() {
+  	result = solve(14)
+  	// Solve part 2
+}
+
+func solve(indicator int) int {
+	line := lines[0]
+
+	for i := indicator; i < len(line); i++ {
+		// Get a substring from i-indicator to i
+		if hasOnlyUniqueChars(line[i-indicator : i]) {
+			println(line[i-indicator : i])
+			return i
 		}
 	}
+
+	return 0
 }
 
 func hasOnlyUniqueChars(s string) bool {
@@ -59,23 +65,6 @@ func hasOnlyUniqueChars(s string) bool {
 		seen[c] = true
 	}
 	return true
-}
-
-func solve2() {
-  	result = 0
-  	// Solve part 2
-	out:
-	for _, line := range lines {
-	  for i := 14; i < len(line); i++ {
-		  // Get a substring from i-4 to i
-		  unique := hasOnlyUniqueChars(line[i-14 : i])
-		  if unique {
-			  println(line[i-14 : i])
-			  result = i
-			  break out
-		  }
-	  }
-	}
 }
 
 func readInput() {
