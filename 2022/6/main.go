@@ -47,24 +47,26 @@ func solve(indicator int) int {
 
 	for i := indicator; i < len(line); i++ {
 		// Get a substring from i-indicator to i
-		if hasOnlyUniqueChars(line[i-indicator : i]) {
+		unique, val := hasOnlyUniqueChars(line[i-indicator : i])
+		if unique {
 			println(line[i-indicator : i])
 			return i
 		}
+		i += val - 1
 	}
 
 	return 0
 }
 
-func hasOnlyUniqueChars(s string) bool {
+func hasOnlyUniqueChars(s string) (bool, int) {
 	seen := make(map[rune]bool)
-	for _, c := range s {
+	for i, c := range s {
 		if seen[c] {
-			return false
+			return false, i
 		}
 		seen[c] = true
 	}
-	return true
+	return true, 0
 }
 
 func readInput() {
