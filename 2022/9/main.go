@@ -39,55 +39,23 @@ func main() {
 
 // Advent of Code 2022 Day 9 Part 1
 func solve1() {
-	head := datastructures.Point{X: 0, Y: 0}
-	tail := datastructures.Point{X: 0, Y: 0}
-
-	visited := make(map[datastructures.Point]bool)
-
-	visited[tail] = true
-
-	for _, line := range lines {
-		args := strings.Split(line, " ")
-		direction := args[0]
-		distance, err := strconv.Atoi(args[1])
-
-		if(err != nil) {
-			log.Fatal(err)
-		}
-
-		for i := 0; i < distance; i++ {
-			switch direction {
-			case "U":
-				head.Y++
-			case "D":
-				head.Y--
-			case "R":
-				head.X++
-			case "L":
-				head.X--
-			}
-
-			if head.MooreDistance(tail) > 1 {
-				tail = tail.Add(head.Subtract(tail).Normalize())
-			}
-
-			visited[tail] = true
-		}
-	}
-
-	result = len(visited)
+	result = solveRopeOfLenN(2)
 }
 
 func solve2() {
-	rope := make([]datastructures.Point, 10)
+	result = solveRopeOfLenN(10)
+}
 
-	for i := 0; i < 10; i++ {
+func solveRopeOfLenN(n int) int {
+	rope := make([]datastructures.Point, n)
+
+	for i := 0; i < n; i++ {
 		rope[i] = datastructures.Point{X: 0, Y: 0}
 	}
 
 	visited := make(map[datastructures.Point]bool)
 
-	visited[rope[9]] = true
+	visited[rope[n-1]] = true
 
 	for _, line := range lines {
 		args := strings.Split(line, " ")
@@ -110,18 +78,18 @@ func solve2() {
 				rope[0].X--
 			}
 
-			for j := 1; j < 10; j++ {
+			for j := 1; j < n; j++ {
 				if rope[j-1].MooreDistance(rope[j]) > 1 {
 					rope[j] = rope[j].Add(rope[j-1].Subtract(rope[j]).Normalize())
 				}
 			}
 
 
-			visited[rope[9]] = true
+			visited[rope[n-1]] = true
 		}
 	}
 
-	result = len(visited)
+	return len(visited)
 }
 
 func readInput() {
