@@ -2,19 +2,19 @@ package datastructures
 
 import "fmt"
 
-type fifo struct {
+type Fifo struct {
 	data []interface{}
 }
 
-func NewFIFO() *fifo {
-	return &fifo{make([]interface{}, 0)}
+func NewFIFO() *Fifo {
+	return &Fifo{make([]interface{}, 0)}
 }
 
-func (f *fifo) Push(v interface{}) {
+func (f *Fifo) Push(v interface{}) {
 	f.data = append(f.data, v)
 }
 
-func (f *fifo) Pop() interface{} {
+func (f *Fifo) Pop() interface{} {
 	if len(f.data) == 0 {
 		return nil
 	}
@@ -24,7 +24,7 @@ func (f *fifo) Pop() interface{} {
 	return v
 }
 
-func (f *fifo) Peek() interface{} {
+func (f *Fifo) Peek() interface{} {
 	if len(f.data) == 0 {
 		return nil
 	}
@@ -32,22 +32,22 @@ func (f *fifo) Peek() interface{} {
 	return f.data[0]
 }
 
-func (f *fifo) Len() int {
+func (f *Fifo) Len() int {
 	return len(f.data)
 }
 
-func (f *fifo) IsEmpty() bool {
+func (f *Fifo) IsEmpty() bool {
 	return len(f.data) == 0
 }
 
-func (f *fifo) Clear() {
+func (f *Fifo) Clear() {
 	f.data = make([]interface{}, 0)
 }
 
-func (f *fifo) Values() []interface{} {
+func (f *Fifo) Values() []interface{} {
 	return f.data
 }
 
-func (f *fifo) String() string {
+func (f *Fifo) String() string {
 	return fmt.Sprint(f.data)
 }

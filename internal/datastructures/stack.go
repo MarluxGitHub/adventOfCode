@@ -2,19 +2,19 @@ package datastructures
 
 import "fmt"
 
-type stack struct {
+type Stack struct {
 	data []interface{}
 }
 
-func NewStack() *stack {
-	return &stack{make([]interface{}, 0)}
+func NewStack() *Stack {
+	return &Stack{make([]interface{}, 0)}
 }
 
-func (s *stack) Push(v interface{}) {
+func (s *Stack) Push(v interface{}) {
 	s.data = append(s.data, v)
 }
 
-func (s *stack) Pop() interface{} {
+func (s *Stack) Pop() interface{} {
 	if len(s.data) == 0 {
 		return nil
 	}
@@ -24,7 +24,7 @@ func (s *stack) Pop() interface{} {
 	return v
 }
 
-func (s *stack) Peek() interface{} {
+func (s *Stack) Peek() interface{} {
 	if len(s.data) == 0 {
 		return nil
 	}
@@ -32,22 +32,22 @@ func (s *stack) Peek() interface{} {
 	return s.data[len(s.data)-1]
 }
 
-func (s *stack) Len() int {
+func (s *Stack) Len() int {
 	return len(s.data)
 }
 
-func (s *stack) IsEmpty() bool {
+func (s *Stack) IsEmpty() bool {
 	return len(s.data) == 0
 }
 
-func (s *stack) Clear() {
+func (s *Stack) Clear() {
 	s.data = make([]interface{}, 0)
 }
 
-func (s *stack) Values() []interface{} {
+func (s *Stack) Values() []interface{} {
 	return s.data
 }
 
-func (s *stack) String() string {
+func (s *Stack) String() string {
 	return fmt.Sprint(s.data)
 }

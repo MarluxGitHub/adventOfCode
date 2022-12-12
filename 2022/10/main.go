@@ -21,6 +21,8 @@ var result int
 var year = 2022
 var day = 10
 
+var crt [][]rune
+
 
 func main() {
   	// STDOUT MUST BE FLUSHED MANUALLY!!!
@@ -39,14 +41,73 @@ func main() {
 
 // Solve part 1
 func solve1() {
-	x := 0
+	x := 1
 	cpuCycles := 0
 
-	stack := datastructures.NewFIFO()
+	stack := input2Fifo()
+
+	for !stack.IsEmpty() {
+		cpuCycles++
+		current := cpuCycles - 20
+
+		if current % 40 == 0 {
+			result += cpuCycles * x
+		}
+
+		val := stack.Pop()
+		x += val.(int)
+	}
+}
+
+// Solve part 2
+func solve2() {
+	stack := input2Fifo()
+	x := 1
+	cpuCycles := 0
+
+	// make rune array 40x6 filled with '.'
+
+	crt = make([][]rune, 6)
+	for i := range crt {
+		crt[i] = make([]rune, 40)
+	}
+
+	for i := range crt {
+		for j := range crt[i] {
+			crt[i][j] = ' '
+		}
+	}
+
+	for !stack.IsEmpty() {
+		row := cpuCycles / 40
+		col := cpuCycles % 40
+
+		if cpuCycles % 40 >= x-1 && cpuCycles % 40 <= x+1 {
+			crt[row][col] = '#'
+		}
+
+		val := stack.Pop()
+		x += val.(int)
+
+		cpuCycles++
+	}
+
+	// print crt
+	for i := range crt {
+		for j := range crt[i] {
+			printf(string(crt[i][j]))
+		}
+		println("")
+	}
+}
+
+
+func input2Fifo() *datastructures.Fifo {
+	fifo := datastructures.NewFIFO()
 
 	for _, line := range lines {
 		args := strings.Split(line, " ")
-		stack.Push(0)
+		fifo.Push(0)
 
 		if args[0] == "addx"  {
 			val, err := strconv.Atoi(args[1])
@@ -55,28 +116,11 @@ func solve1() {
 				log.Fatal(err)
 			}
 
-			stack.Push(val)
+			fifo.Push(val)
 		}
 	}
 
-	for !stack.IsEmpty() {
-		cpuCycles++
-		current := cpuCycles - 20
-
-		if current % 40 == 0 {
-			println("x:" + strconv.Itoa(x) + " cpuCycles:" + strconv.Itoa(cpuCycles))
-			result += cpuCycles * x
-		}
-
-		val := stack.Pop()
-		println("val:" + strconv.Itoa(val.(int)))
-		x += val.(int)
-	}
-}
-
-// Solve part 2
-func solve2() {
-
+	return fifo
 }
 
 func readInput() {
