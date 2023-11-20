@@ -1,7 +1,7 @@
 package main
 
 import (
-	"MarluxGitHub/adventOfCode/internal/datastructures"
+	"MarluxGitHub/adventOfCode/pkg/datastructures"
 	"bufio"
 	"fmt"
 	"log"
@@ -13,8 +13,9 @@ import (
 )
 
 var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
+
 func println(f string) { fmt.Fprintln(writer, f) }
-func printf(f string) { fmt.Fprintf(writer, f) }
+func printf(f string)  { fmt.Fprintf(writer, f) }
 
 var lines []string
 var result int
@@ -23,20 +24,19 @@ var day = 10
 
 var crt [][]rune
 
-
 func main() {
-  	// STDOUT MUST BE FLUSHED MANUALLY!!!
-  	defer writer.Flush()
+	// STDOUT MUST BE FLUSHED MANUALLY!!!
+	defer writer.Flush()
 
-  	readInput()
-
-	result = 0
-  	solve1()
-  	println("1:" + strconv.Itoa(result))
+	readInput()
 
 	result = 0
-  	solve2()
-  	println("2:" + strconv.Itoa(result))
+	solve1()
+	println("1:" + strconv.Itoa(result))
+
+	result = 0
+	solve2()
+	println("2:" + strconv.Itoa(result))
 }
 
 // Solve part 1
@@ -50,7 +50,7 @@ func solve1() {
 		cpuCycles++
 		current := cpuCycles - 20
 
-		if current % 40 == 0 {
+		if current%40 == 0 {
 			result += cpuCycles * x
 		}
 
@@ -82,7 +82,7 @@ func solve2() {
 		row := cpuCycles / 40
 		col := cpuCycles % 40
 
-		if cpuCycles % 40 >= x-1 && cpuCycles % 40 <= x+1 {
+		if cpuCycles%40 >= x-1 && cpuCycles%40 <= x+1 {
 			crt[row][col] = '#'
 		}
 
@@ -101,7 +101,6 @@ func solve2() {
 	}
 }
 
-
 func input2Fifo() *datastructures.Fifo {
 	fifo := datastructures.NewFIFO()
 
@@ -109,7 +108,7 @@ func input2Fifo() *datastructures.Fifo {
 		args := strings.Split(line, " ")
 		fifo.Push(0)
 
-		if args[0] == "addx"  {
+		if args[0] == "addx" {
 			val, err := strconv.Atoi(args[1])
 
 			if err != nil {

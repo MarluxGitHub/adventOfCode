@@ -10,12 +10,13 @@ import (
 
 	"github.com/echojc/aocutil"
 
-	"MarluxGitHub/adventOfCode/internal/datastructures"
+	"MarluxGitHub/adventOfCode/pkg/datastructures"
 )
 
 var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
+
 func println(f string) { fmt.Fprintln(writer, f) }
-func printf(f string) { fmt.Fprintf(writer, f) }
+func printf(f string)  { fmt.Fprintf(writer, f) }
 
 var lines []string
 var result int
@@ -23,18 +24,18 @@ var year = 2022
 var day = 9
 
 func main() {
-  	// STDOUT MUST BE FLUSHED MANUALLY!!!
-  	defer writer.Flush()
+	// STDOUT MUST BE FLUSHED MANUALLY!!!
+	defer writer.Flush()
 
-  	readInput()
-
-	result = 0
-  	solve1()
-  	println("1:" + strconv.Itoa(result))
+	readInput()
 
 	result = 0
-  	solve2()
-  	println("2:" + strconv.Itoa(result))
+	solve1()
+	println("1:" + strconv.Itoa(result))
+
+	result = 0
+	solve2()
+	println("2:" + strconv.Itoa(result))
 }
 
 // Advent of Code 2022 Day 9 Part 1
@@ -62,7 +63,7 @@ func solveRopeOfLenN(n int) int {
 		direction := args[0]
 		distance, err := strconv.Atoi(args[1])
 
-		if(err != nil) {
+		if err != nil {
 			log.Fatal(err)
 		}
 
@@ -84,7 +85,6 @@ func solveRopeOfLenN(n int) int {
 				}
 			}
 
-
 			visited[rope[n-1]] = true
 		}
 	}
@@ -95,11 +95,11 @@ func solveRopeOfLenN(n int) int {
 func readInput() {
 	i, err := aocutil.NewInputFromFile("../../session_id")
 	if err != nil {
-	log.Fatal(err)
+		log.Fatal(err)
 	}
 
 	lines, err = i.Strings(year, day)
 	if err != nil {
-	log.Fatal(err)
+		log.Fatal(err)
 	}
 }

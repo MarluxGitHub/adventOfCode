@@ -1,7 +1,7 @@
 package main
 
 import (
-	"MarluxGitHub/adventOfCode/internal/loader"
+	"MarluxGitHub/adventOfCode/pkg/loader"
 	"flag"
 	"os"
 )
