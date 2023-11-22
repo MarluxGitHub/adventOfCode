@@ -62,7 +62,7 @@ func Solve() {
 
 			if posInt == 0  {
 				res2[posInt] = string(hash[6])
-				times2=9
+				times2++
 			}
 
 			times++
