@@ -1,6 +1,6 @@
 # Golang Solution Advent of Code
 
-Folders have already solved goland solutions. They also contain the Testdata which i got from the site.
+Folders have already solved golang solutions. They also contain the Testdata which i got from the site.
 
 ## Generator for new Tasks
 
