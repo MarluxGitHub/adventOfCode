@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/echojc/aocutil"
 )
@@ -73,29 +74,23 @@ func solve(two bool) {
 
 func replaceNumberWords(s string) string {
 	// map of number words to their number
-	// e.g. "one" -> "1e"
-	// e -> for overlapping words
+	// e.g. "one" -> "o1e"
+	// o and e -> for overlapping words
 	numberWords := map[string]string{
-		"zero":  "0o",
-		"one":   "1e",
-		"two":   "2o",
-		"three": "3e",
-		"four":  "4r",
-		"five":  "5e",
-		"six":   "6x",
-		"seven": "7n",
-		"eight": "8t",
-		"nine":  "9e",
+		"zero":  "z0o",
+		"one":   "o1e",
+		"two":   "t2o",
+		"three": "t3e",
+		"four":  "f4r",
+		"five":  "f5e",
+		"six":   "s6x",
+		"seven": "s7n",
+		"eight": "e8t",
+		"nine":  "n9e",
 	}
 
-	for i := 0; i < len(s); i++ {
-		for k, v := range numberWords {
-			if s[i] == k[0] {
-				if i+len(k) <= len(s) && s[i:i+len(k)] == k {
-					s = s[:i] + v + s[i+len(k):]
-				}
-			}
-		}
+	for k, v := range numberWords {
+		s = strings.ReplaceAll(s, k, v)
 	}
 
 	return s
