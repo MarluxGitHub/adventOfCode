@@ -30,10 +30,3 @@ func Sign(x int) int {
 	}
 	return 0
 }
-
-func Pow(x, y int) int {
-	if y == 0 {
-		return 1
-	}
-	return x * Pow(x, y-1)
-}
