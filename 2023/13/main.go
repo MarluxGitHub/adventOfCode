@@ -70,14 +70,6 @@ func parseInput() {
 	patterns = blocks
 }
 
-func printPattern(pattern []string) {
-	for _, row := range pattern {
-		fmt.Println(row)
-		fmt.Println("")
-	}
-	fmt.Println("")
-}
-
 func findReflection(grid []string, smudge bool) int {
 	for rIdx := 1; rIdx < len(grid); rIdx++ {
 		gridCopy := make([]string, len(grid))
@@ -93,7 +85,12 @@ func findReflection(grid []string, smudge bool) int {
 		leftStr := strings.Join(left, "")
 		rightStr := strings.Join(right, "")
 
-		if (smudge && luxStrings.HammingDistance(leftStr, rightStr) == 1) || (!smudge && leftStr == rightStr) {
+		distance := 0
+		if smudge {
+			distance = 1
+		}
+
+		if luxStrings.HammingDistance(leftStr, rightStr) == distance {
 			return rIdx
 		}
 	}
