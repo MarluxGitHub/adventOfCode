@@ -1,2 +1,4 @@
 github.com/echojc/aocutil v0.0.0-20211125040159-e71bcb34f68f h1:IVbDKHoZJYB6lLU18+5ZsHPeTzr4AmrJMrGd7y8FogY=
 github.com/echojc/aocutil v0.0.0-20211125040159-e71bcb34f68f/go.mod h1:rNP1uUTizLNEwInSxs+oNsw+yBfHNhUg9y+kCI15MjQ=
+gonum.org/v1/gonum v0.14.0 h1:2NiG67LD1tEH0D7kM+ps2V+fXmsAnpUeec7n8tcr4S0=
+gonum.org/v1/gonum v0.14.0/go.mod h1:AoWeoz0becf9QMWtE8iWXNXc27fK4fNeHNf/oMejGfU=
