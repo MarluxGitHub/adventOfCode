@@ -35,6 +35,24 @@ func (g *Graph) AddEdge(from, to *Node, cost int) {
 	from.Edges = append(from.Edges, e)
 }
 
+func (g *Graph) GetNodes() []*Node {
+	return g.Nodes
+}
+
+func (n *Node) GetEdges() []*Edge {
+	return n.Edges
+}
+
+func (n *Node) GetEdge(to *Node) *Edge {
+	for _, e := range n.Edges {
+		if e.To == to {
+			return e
+		}
+	}
+
+	return nil
+}
+
 func NewGraph() *Graph {
 	return &Graph{Nodes: make([]*Node, 0)}
 }
