@@ -6,13 +6,13 @@ func Cipher(s string, shift int) string {
 		if c == '-' {
 			result += " "
 		} else {
-			result += string(cipherChar(c, shift))
+			result += string(CipherChar(c, shift))
 		}
 	}
 	return result
 }
 
-func cipherChar(c rune, shift int) rune {
+func CipherChar(c rune, shift int) rune {
 	if c == '-' {
 		return ' '
 	}
