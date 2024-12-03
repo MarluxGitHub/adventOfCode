@@ -25,18 +25,20 @@ func (g *Graph) GetNode(name string) *Node {
 }
 
 func (g *Graph) AddNode(name string) *Node {
-	n := &Node{Name: name}
+	n := &Node{
+		Name:  name,
+		Edges: make([]*Edge, 0),
+	}
 	g.Nodes = append(g.Nodes, n)
 	return n
 }
 
-func (g *Graph) AddEdge(from, to *Node, cost int) {
-	e := &Edge{To: to, Cost: cost}
-	from.Edges = append(from.Edges, e)
-}
-
 func (g *Graph) GetNodes() []*Node {
 	return g.Nodes
+}
+
+func (n *Node) AddEdge(to *Node, cost int) {
+	n.Edges = append(n.Edges, &Edge{To: to, Cost: cost})
 }
 
 func (n *Node) GetEdges() []*Edge {
