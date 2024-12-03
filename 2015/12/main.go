@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/echojc/aocutil"
 )
@@ -39,52 +39,100 @@ func main() {
 // Solve part 1
 func Solve1() {
 	// get All Numbers in the String
-	for c := 0; c < len(lines[0]); c++ {
-		if lines[0][c] == '-' || (lines[0][c] >= '0' && lines[0][c] <= '9') {
-			num := ""
-			for ; c < len(lines[0]) && (lines[0][c] == '-' || (lines[0][c] >= '0' && lines[0][c] <= '9')); c++ {
-				num += string(lines[0][c])
-			}
-			i, _ := strconv.Atoi(num)
-			result += i
-		}
+	reg := "(-?\\d+)"
+	regexp := regexp.MustCompile(reg)
+
+	// get all the matches
+	matches := regexp.FindAllString(lines[0], -1)
+
+	for _, match := range matches {
+		num, _ := strconv.Atoi(match)
+		result += num
 	}
 }
 
 // Solve part 2
 func Solve2() {
-	// find all positions of the word "red" in the string
-	for c := 0; c < len(lines[0]); c++ {
-		if strings.HasPrefix(lines[0][c:], `"red"`) {
-			// go left until you hit a { or [
-			l := c
-			for ; l >= 0 && lines[0][l] != '{' && lines[0][l] != '['; l-- {
+	// get all Locations of the String Red
+
+	for {
+		// find the first occurence of the word red
+		redIndex := -1
+		for i, c := range lines[0] {
+			if c == '"' && i < len(lines[0])-2 && lines[0][i+1] == 'r' && lines[0][i+2] == 'e' && lines[0][i+3] == 'd' && lines[0][i+4] == '"' {
+				redIndex = i
+				break
+			}
+		}
+
+		// if no red is found, break
+		if redIndex == -1 {
+			break
+		}
+
+		// find the first { and }
+		openIndex := -1
+		closeIndex := -1
+		bracket := false
+		for i := redIndex - 5; i >= 0; i-- {
+			if lines[0][i] == '{' {
+				openIndex = i
+				break
 			}
 
-			if lines[0][l] == '{' {
-				// go right until you hit a }
-				r := c + 4
-				for ; r < len(lines[0]) && lines[0][r] != '}'; r++ {
-				}
+			if lines[0][i] == ']' {
+				bracket = true
+			}
 
-				if r < len(lines[0]) {
-					lines[0] = lines[0][:l] + lines[0][r+1:]
-					c = l
+			if lines[0][i] == '[' {
+				if bracket {
+					bracket = false
+				} else {
+					break
 				}
 			}
 		}
-	}
 
-	for c := 0; c < len(lines[0]); c++ {
-		if lines[0][c] == '-' || (lines[0][c] >= '0' && lines[0][c] <= '9') {
-			num := ""
-			for ; c < len(lines[0]) && (lines[0][c] == '-' || (lines[0][c] >= '0' && lines[0][c] <= '9')); c++ {
-				num += string(lines[0][c])
+		bracket = false
+		for i := redIndex; i < len(lines[0]); i++ {
+			if lines[0][i] == '}' {
+				closeIndex = i
+				break
 			}
-			i, _ := strconv.Atoi(num)
-			result += i
+
+			if lines[0][i] == '[' {
+				bracket = true
+			}
+
+			if lines[0][i] == ']' {
+				if bracket {
+					bracket = false
+				} else {
+					break
+				}
+			}
+		}
+
+		// remove the string from the openIndex to the closeIndex
+		if openIndex != -1 && closeIndex != -1 {
+			lines[0] = lines[0][:openIndex] + lines[0][closeIndex+1:]
+		} else {
+			break
 		}
 	}
+
+	// get All Numbers in the String
+	reg := "(-?\\d+)"
+	regex := regexp.MustCompile(reg)
+
+	// get all the matches
+	matches := regex.FindAllString(lines[0], -1)
+
+	for _, match := range matches {
+		num, _ := strconv.Atoi(match)
+		result += num
+	}
+
 }
 
 func readInput() {
