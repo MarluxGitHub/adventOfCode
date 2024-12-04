@@ -10,7 +10,7 @@ import (
 
 	"github.com/echojc/aocutil"
 
-	intcode "MarluxGitHub/adventOfCode/pkg/intCode"
+	intcode "MarluxGitHub/adventOfCode/pkg/intcode"
 )
 
 var writer *bufio.Writer = bufio.NewWriter(os.Stdout)

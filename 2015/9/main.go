@@ -125,10 +125,11 @@ func genGraph() {
 		toNode := graph.GetNode(to)
 		if toNode == nil {
 			toNode = graph.AddNode(to)
+
 		}
 
-		graph.AddEdge(fromNode, toNode, cost)
-		graph.AddEdge(toNode, fromNode, cost)
+		fromNode.AddEdge(toNode, cost)
+		toNode.AddEdge(fromNode, cost)
 	}
 }
 
