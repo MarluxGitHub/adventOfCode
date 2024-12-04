@@ -124,7 +124,7 @@ func genPointMap() {
 	for x, line := range lines {
 		width = len(line)
 		for y, r := range line {
-			pointMap[datastructures.Point{x, y}] = r
+			pointMap[datastructures.Point{X: x, Y: y}] = r
 		}
 	}
 }
