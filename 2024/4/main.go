@@ -107,14 +107,11 @@ func Solve2() {
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
 			if pointMap[datastructures.Point{X: x, Y: y}] == 'A' {
-				if x-1 >= 0 && y-1 >= 0 && x+1 < width && y+1 < height {
-					word1 := string(pointMap[datastructures.Point{X: x - 1, Y: y - 1}]) + "A" + string(pointMap[datastructures.Point{X: x + 1, Y: y + 1}])
-					word2 := string(pointMap[datastructures.Point{X: x - 1, Y: y + 1}]) + "A" + string(pointMap[datastructures.Point{X: x + 1, Y: y - 1}])
-					if ((word1 == "SAM") || (word1 == "MAS")) && ((word2 == "SAM") || (word2 == "MAS")) {
-						result++
-					}
+				word1 := string(pointMap[datastructures.Point{X: x - 1, Y: y - 1}]) + "A" + string(pointMap[datastructures.Point{X: x + 1, Y: y + 1}])
+				word2 := string(pointMap[datastructures.Point{X: x - 1, Y: y + 1}]) + "A" + string(pointMap[datastructures.Point{X: x + 1, Y: y - 1}])
+				if ((word1 == "SAM") || (word1 == "MAS")) && ((word2 == "SAM") || (word2 == "MAS")) {
+					result++
 				}
-
 			}
 		}
 	}
