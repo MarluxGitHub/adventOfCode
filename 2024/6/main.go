@@ -134,31 +134,9 @@ func processRoom(pNumber int, wg *sync.WaitGroup, r datastructures.Point, room m
 			break
 		}
 
-		var directionSymbol rune
-		// mark current field as visited with direction symbol
-		if direction.X == 0 && direction.Y == -1 {
-			room[pos] = '^'
-			directionSymbol = '^'
-		} else if direction.X == 1 && direction.Y == 0 {
-			room[pos] = '>'
-			directionSymbol = '>'
-		} else if direction.X == 0 && direction.Y == 1 {
-			room[pos] = 'v'
-			directionSymbol = 'v'
-		} else if direction.X == -1 && direction.Y == 0 {
-			room[pos] = '<'
-			directionSymbol = '<'
-		}
-
 		// check if the field of pos + direction is in room
 		nextPos := pos.Add(direction)
 		if _, ok := room[nextPos]; !ok {
-			break
-		}
-
-		// check if field is already visited
-		if room[nextPos] == directionSymbol {
-			*result++
 			break
 		}
 
