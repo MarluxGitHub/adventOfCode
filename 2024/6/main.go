@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
 
 	"github.com/echojc/aocutil"
 )
@@ -91,74 +92,97 @@ func Solve1() {
 
 // Solve part 2
 func Solve2() {
+	cleanRoom()
+	pos = start
+	direction = startDirection
+	res := 0
+	var wg sync.WaitGroup
+	i := 0
+
 	for r := range room {
-		if room[r] == '.' {
-			room[r] = '#'
+		// copy room map
+		roomCopy := make(map[datastructures.Point]rune)
+		for k, v := range room {
+			roomCopy[k] = v
 		}
-		for {
-			// mark current field as visited
-			if direction.X == 0 {
-				// if already - then +
-				if room[pos] == '-' {
-					room[pos] = '+'
-				} else {
-					room[pos] = '|'
-				}
 
-			} else {
-				// if already | then +
-				if room[pos] == '|' {
-					room[pos] = '+'
-				} else {
-					room[pos] = '-'
-				}
-			}
+		wg.Add(1)
+		i++
+		go processRoom(i, &wg, r, roomCopy, start, startDirection, &res)
+	}
+	wg.Wait()
 
-			// check if the field of pos + direction is in room
-			if _, ok := room[pos.Add(direction)]; !ok {
-				break
-			}
+	result = res
+}
 
-			// check if field is already visited
-			if (room[pos.Add(direction)] == '-' || room[pos.Add(direction)] == '+') && direction.X == 0 {
-				result++
-				break
-			}
+func processRoom(pNumber int, wg *sync.WaitGroup, r datastructures.Point, room map[datastructures.Point]rune, start datastructures.Point, startDirection datastructures.Point, result *int) {
+	defer wg.Done()
+	pos := start
+	direction := startDirection
+	visited := make(map[datastructures.Point]bool)
+	i := 0
 
-			if (room[pos.Add(direction)] == '|' || room[pos.Add(direction)] == '+') && direction.Y == 0 {
-				result++
-				break
-			}
-
-			// check if the field of pos + direction is a wall
-			if room[pos.Add(direction)] == '#' {
-				// Turn right
-				if direction.X == 0 && direction.Y == -1 {
-					direction = datastructures.Point{X: 1, Y: 0}
-					continue
-				}
-				if direction.X == 1 && direction.Y == 0 {
-					direction = datastructures.Point{X: 0, Y: 1}
-					continue
-				}
-				if direction.X == 0 && direction.Y == 1 {
-					direction = datastructures.Point{X: -1, Y: 0}
-					continue
-				}
-				if direction.X == -1 && direction.Y == 0 {
-					direction = datastructures.Point{X: 0, Y: -1}
-					continue
-				}
-
-			}
-
-			// move to the next field
-			pos = pos.Add(direction)
+	if room[r] == '.' {
+		room[r] = '#'
+	} else {
+		return
+	}
+	for {
+		i++
+		if i > 16900 {
+			*result++
+			break
 		}
-		cleanRoom()
-		pos = start
+
+		var directionSymbol rune
+		// mark current field as visited with direction symbol
+		if direction.X == 0 && direction.Y == -1 {
+			room[pos] = '^'
+			directionSymbol = '^'
+		} else if direction.X == 1 && direction.Y == 0 {
+			room[pos] = '>'
+			directionSymbol = '>'
+		} else if direction.X == 0 && direction.Y == 1 {
+			room[pos] = 'v'
+			directionSymbol = 'v'
+		} else if direction.X == -1 && direction.Y == 0 {
+			room[pos] = '<'
+			directionSymbol = '<'
+		}
+
+		// check if the field of pos + direction is in room
+		nextPos := pos.Add(direction)
+		if _, ok := room[nextPos]; !ok {
+			break
+		}
+
+		// check if field is already visited
+		if room[nextPos] == directionSymbol {
+			*result++
+			break
+		}
+
+		// check if the field of pos + direction is a wall
+		if room[nextPos] == '#' {
+			// Turn right
+			if direction.X == 0 && direction.Y == -1 {
+				direction = datastructures.Point{X: 1, Y: 0}
+			} else if direction.X == 1 && direction.Y == 0 {
+				direction = datastructures.Point{X: 0, Y: 1}
+			} else if direction.X == 0 && direction.Y == 1 {
+				direction = datastructures.Point{X: -1, Y: 0}
+			} else if direction.X == -1 && direction.Y == 0 {
+				direction = datastructures.Point{X: 0, Y: -1}
+			}
+			continue
+		}
+
+		// move to the next field
+		pos = nextPos
+		visited[pos] = true
 	}
 
+	println("Debug:" + strconv.Itoa(pNumber) + " done")
 }
 
 func readRoom() {
@@ -194,24 +218,10 @@ func readRoom() {
 
 func cleanRoom() {
 	for k := range room {
-		if room[k] == '|' || room[k] == '-' || room[k] == '+' || room[k] == 'X' {
+		if room[k] != '#' {
 			room[k] = '.'
 		}
 	}
-}
-
-func printRoom() {
-	for y := 0; y < len(lines); y++ {
-		for x := 0; x < len(lines[y]); x++ {
-			if pos.X == x && pos.Y == y {
-				printf("X")
-			} else {
-				printf(string(room[datastructures.Point{x, y}]))
-			}
-		}
-		println("")
-	}
-	println("")
 }
 
 func readInput() {
