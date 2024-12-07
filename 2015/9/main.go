@@ -119,12 +119,12 @@ func genGraph() {
 
 		fromNode := graph.GetNode(from)
 		if fromNode == nil {
-			fromNode = graph.AddNode(from, nil)
+			fromNode = graph.AddNode(from)
 		}
 
 		toNode := graph.GetNode(to)
 		if toNode == nil {
-			toNode = graph.AddNode(to, nil)
+			toNode = graph.AddNode(to)
 
 		}
 
