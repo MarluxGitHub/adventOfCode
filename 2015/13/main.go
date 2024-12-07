@@ -51,7 +51,7 @@ func Solve1() {
 // Solve part 2
 func Solve2() {
 
-	graph.AddNode("Me")
+	graph.AddNode("Me", nil)
 	nodeMe := graph.GetNode("Me")
 	nodeMap[len(nodeMap)] = nodeMe
 
@@ -103,14 +103,14 @@ func generateGraph() {
 		}
 
 		if node1 == nil {
-			graph.AddNode(string[0])
+			graph.AddNode(string[0], nil)
 			node1 = graph.GetNode(string[0])
 			nodeMap[i] = node1
 			i++
 		}
 
 		if node2 == nil {
-			graph.AddNode(string[10])
+			graph.AddNode(string[10], nil)
 			node2 = graph.GetNode(string[10])
 			nodeMap[i] = node2
 			i++

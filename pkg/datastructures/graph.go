@@ -7,6 +7,7 @@ type Graph struct {
 type Node struct {
 	Name  string
 	Edges []*Edge
+	Value string
 }
 
 type Edge struct {
@@ -24,11 +25,13 @@ func (g *Graph) GetNode(name string) *Node {
 	return nil
 }
 
-func (g *Graph) AddNode(name string) *Node {
+func (g *Graph) AddNode(name string, value string) *Node {
 	n := &Node{
 		Name:  name,
 		Edges: make([]*Edge, 0),
+		Value: value,
 	}
+
 	g.Nodes = append(g.Nodes, n)
 	return n
 }
