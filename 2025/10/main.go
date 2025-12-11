@@ -181,11 +181,14 @@ func minButtonPressesBFS(m Machine) int {
 
 // Solve part 2
 func Solve2() {
-	println("Start Solve2")
-	writer.Flush()
 	totalPresses := 0
+
+	println("Start Solve2")
+	println("")
+	writer.Flush()
+
 	for _, machine := range Machines {
-		presses := solveMachine2(machine.Joltage, machine.Buttons)
+		presses := solvePart2Z3(machine)
 		if presses >= 0 {
 			println(fmt.Sprintf("Machine: %d presses", presses))
 			writer.Flush()
@@ -195,59 +198,92 @@ func Solve2() {
 	result = totalPresses
 }
 
-// solveMachine2 - use greedy approach: always press buttons with most effect
-func solveMachine2(target []int, buttons [][]int) int {
-	state := make([]int, len(target))
-	copy(state, target)
+func solvePart2Z3(m Machine) int {
+	// Create Z3 context
+	ctx := z3.NewContext(nil)
+	intSort := ctx.IntSort()
 
-	presses := 0
-	maxIter := 10000
-
-	for presses < maxIter {
-		// Check if done
-		done := true
-		for _, v := range state {
-			if v > 0 {
-				done = false
-				break
-			}
-		}
-		if done {
-			return presses
-		}
-
-		// Find button that reduces max value
-		bestBtn := -1
-		bestReduction := 0
-
-		for btnIdx, btn := range buttons {
-			// Check if this button would help
-			reduction := 0
-			for _, idx := range btn {
-				if idx < len(state) && state[idx] > 0 {
-					reduction++
-				}
-			}
-			if reduction > bestReduction {
-				bestReduction = reduction
-				bestBtn = btnIdx
-			}
-		}
-
-		if bestBtn == -1 {
-			break
-		}
-
-		// Apply best button
-		for _, idx := range buttons[bestBtn] {
-			if idx < len(state) {
-				state[idx]--
-			}
-		}
-		presses++
+	// Create integer variables for each button (how many times it's pressed)
+	buttonVars := make([]z3.Int, len(m.Buttons))
+	for i := range m.Buttons {
+		buttonVars[i] = ctx.IntConst(fmt.Sprintf("button%d", i))
 	}
 
-	return -1
+	// Create a map from counter index to buttons that affect it
+	countersToButtons := make(map[int][]z3.Int)
+	for i, button := range m.Buttons {
+		for _, flip := range button {
+			countersToButtons[flip] = append(countersToButtons[flip], buttonVars[i])
+		}
+	}
+
+	// Helper function to check if a solution exists with total presses <= maxTotal
+	checkSolution := func(maxTotal int) bool {
+		solver := z3.NewSolver(ctx)
+
+		// For each counter, add constraint: sum of button presses affecting it = joltage requirement
+		for counterIndex, counterButtons := range countersToButtons {
+			if counterIndex >= len(m.Joltage) {
+				continue
+			}
+			targetValue := ctx.FromInt(int64(m.Joltage[counterIndex]), intSort).(z3.Int)
+
+			// Sum all button presses that affect this counter
+			var sum z3.Int = ctx.FromInt(0, intSort).(z3.Int)
+			for _, buttonVar := range counterButtons {
+				sum = sum.Add(buttonVar)
+			}
+
+			// Add constraint: sum == targetValue
+			solver.Assert(sum.Eq(targetValue))
+		}
+
+		// Ensure all button variables are non-negative
+		zero := ctx.FromInt(0, intSort).(z3.Int)
+		for _, buttonVar := range buttonVars {
+			solver.Assert(buttonVar.GE(zero))
+		}
+
+		// Sum of all button presses
+		var sumOfAllButtonVars z3.Int = ctx.FromInt(0, intSort).(z3.Int)
+		for _, buttonVar := range buttonVars {
+			sumOfAllButtonVars = sumOfAllButtonVars.Add(buttonVar)
+		}
+
+		// Add constraint: total presses <= maxTotal
+		maxPresses := ctx.FromInt(int64(maxTotal), intSort).(z3.Int)
+		solver.Assert(sumOfAllButtonVars.LE(maxPresses))
+
+		// Check if there's a solution
+		sat, err := solver.Check()
+		return err == nil && sat
+	}
+
+	// Binary search for minimum total presses
+	// First, find an upper bound
+	upperBound := 1
+	for !checkSolution(upperBound) {
+		upperBound *= 2
+		if upperBound > 100000 {
+			println("Problem is UNSATISFIABLE (no solution exists).")
+			return -1000000
+		}
+	}
+
+	// Binary search for minimum
+	left, right := 0, upperBound
+	result := upperBound
+	for left <= right {
+		mid := (left + right) / 2
+		if checkSolution(mid) {
+			result = mid
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+	}
+
+	return result
 }
 
 func readInput() {
